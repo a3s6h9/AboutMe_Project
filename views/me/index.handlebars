@@ -1,0 +1,26 @@
+<div class="container mt-5 bg-light shadow p-3 mb-5 bg-white rounded animated bounceIn" id="me-container">
+    <h1 id="username">{{user.name}}</h1>
+    <div class="container">
+    <p class="lead"><strong>here's your link:</strong> just share it with your friends and you will automatically get the thoughts they wrote about ya.</p>
+    <input type="text" id="URL" class="form-control" value="https://ancient-refuge-24138.herokuapp.com/me/{{user.name}}/write">
+    <button class="btn btn-dark mt-3" onclick="copy()">Copy</button>
+    </div>
+</div>
+</div>
+
+   <div class="container animated bounceInLeft">
+        <h1>Thoughts About You: </h1>
+    <div class="card card-body mb-3" id="thought-container">
+        {{#each thought}}
+            <p><strong>Anonymous:</strong> {{text}}</p>
+            <p><em>{{createdAt}}</em></p>
+            <form method="post" action="/me/{{id}}?_method=DELETE">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" class="fa fa-trash btn btn-block btn-danger" onclick="fadeOut()" id="c-btn"> Delete</button>
+            </form>
+            <hr>
+        {{else}}
+            <p>No Thoughts available.</p>
+        {{/each}}
+    </div>
+   </div>

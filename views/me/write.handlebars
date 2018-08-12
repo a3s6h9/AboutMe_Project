@@ -1,0 +1,8 @@
+<div class="container mt-5 bg-dark shadow p-3 bg-white rounded animated bounceInLeft">
+  <h2>@{{name}}</h2>
+  <form method="POST" action="/me/{{name}}/write">
+    <textarea name="thought" cols="30" rows="10" placeholder="write something for {{name}}"></textarea>
+    <br>
+    <button type="submit" class="btn btn-dark btn-block">Submit</button>
+  </form>
+</div>
