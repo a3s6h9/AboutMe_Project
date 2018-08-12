@@ -4,6 +4,8 @@ const passport = require('passport');
 
 const router = require('express').Router();
 
+const {checkSpaces} = require('../helpers/authURL');
+
 // Users Model
 require('../models/user');
 const User = mongoose.model('User');
@@ -30,6 +32,8 @@ router.post('/register', (req, res) => {
     errors.push({message: 'password must be atleast 5 characters!'});
   } else if (req.body.cell.length < 10 || req.body.cell.length > 10) {
     errors.push({message: 'please enter a valid Phone number'});
+  } else if (checkSpaces(req.body.name)) {
+    errors.push({message:  `sorry you can't put white spaces in your name`});
   }
 
   if (errors.length > 0) {
