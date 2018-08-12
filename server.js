@@ -21,6 +21,7 @@ let db = require('./config/db');
 
 // mongoose global promise
 mongoose.Promise = global.Promise;
+console.log(db.MONGO_URI)
 // connnect to mongoose
 mongoose.connect(db.MONGO_URI, { useNewUrlParser: true } ).then( () => {
   console.log('connected to the MongoDB');
