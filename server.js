@@ -7,6 +7,7 @@ const session = require('express-session');
 const passport = require('passport');
 const path = require('path');
 const methodOverride = require('method-override');
+const MongoStore = require('connect-mongo')(session);
 
 const app = express();
 
@@ -39,11 +40,16 @@ app.use(bodyParser.json());
 // Set Up Static Folder
 app.use(express.static(path.join(__dirname, '/public')));
 
-// Express Session Middleware
+
 app.use(session({
-  secret: '27017Hoe',
+  secret: db.SESSION_SEC,
   resave: true,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store: new MongoStore({
+    url: db.MONGO_URI,
+    ttl: 14 * 24 * 60 * 60,
+    autoRemove: 'native'
+  })
 }));
 
 // Connect Flash Middleware

@@ -1,8 +1,13 @@
 <div class="container mt-5 bg-dark shadow p-3 bg-white rounded animated bounceInLeft">
   <h2>@{{name}}</h2>
   <form method="POST" action="/me/{{name}}/write">
-    <textarea name="thought" cols="30" rows="10" placeholder="write something for {{name}}"></textarea>
+    <textarea name="thought" cols="34" rows="10" placeholder="write something for {{name}}, don't worry {{name}} is not gonna be able to know who sent this."></textarea>
     <br>
     <button type="submit" class="btn btn-dark btn-block">Submit</button>
   </form>
+</div>
+
+<div class="container mt-3">
+  <p><strong>Wanna Join</strong> just click on the button below.</p>
+  <a href="/users/register" class="btn btn-dark">JOIN</a>
 </div>
