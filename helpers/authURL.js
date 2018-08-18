@@ -28,11 +28,20 @@ module.exports = {
           pass: process.env.G_PASS
       }
   });
+
+  const token = jwt.sign({
+    data: uvUser._id
+}, process.env.JWT_SEC, { expiresIn: 60 * 60 });
+
+//const url = `https://warm-dawn-89730.herokuapp.com/users/confirm/${token}`;
+const url = `http://localhost:5000/users/confirm/${token}`;
+
   const mailOpt = {
       from: process.env.G_MAIL,
       to: uEmail,
-      subject: 'Confirmation E-Mail',
-      html: `<h3>click on the link below to confirm your email</h3> 
+      subject: 'E-Mail Confirmation',
+      html: ` <h1>Confirm your AboutMe Account</h1>
+              <h3>click on the link below to confirm your email</h3> 
               <a href="${url}">${url}</a>`
   }
   
@@ -41,12 +50,6 @@ module.exports = {
   
       console.log(info);
   });
-  
-  const token = jwt.sign({
-      data: uvUser._id
-  }, process.env.JWT_SEC, { expiresIn: 60 * 60 });
-  
-  const url = `https://warm-dawn-89730.herokuapp.com/users/confirm/${token}`;
   
   }
 }

@@ -92,9 +92,9 @@ router.get('/confirm/:token', (req, res) => {
   const decoded = jwt.verify(req.params.token, process.env.JWT_SEC);
 
   User.findOneAndUpdate({_id: decoded.data}, {$set: {confirmed: true}}, {new: true}).then( user => {
-    req.flash('success_msg', `congractulations ${user.name}you have been verified, you can now log in.`);
+    req.flash('success_msg', `congractulations you have been verified, you can now log in.`);
     res.redirect('/users/login');
-  })
+  }).catch( e => console.log(e));
 
 });
 
