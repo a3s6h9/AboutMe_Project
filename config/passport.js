@@ -11,6 +11,8 @@ module.exports = (passport) => {
     }).then( user => {
       if (!user) {
         return done(null, false, {message: 'No user found!'});
+      } else if (user.confirmed != true ) {
+        return done(null, false, {message: 'please confirm your Email, verification link is sent to yout email!'});
       }
 
       bcrypt.compare(password, user.password, (err, result) => {

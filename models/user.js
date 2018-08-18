@@ -10,9 +10,9 @@ const usersSchema = new Schema({
     required: true,
     min: 3
   },
-  phone: {
-    type: String,
-    required: true
+  confirmed: {
+    type: Boolean,
+    default: false
   },
   password: {
     type: String,

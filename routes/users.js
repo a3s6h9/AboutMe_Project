@@ -1,14 +1,17 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const _ = require('lodash');
 
 const router = require('express').Router();
 
-const {checkSpaces} = require('../helpers/authURL');
+const {checkSpaces, confirmEmail} = require('../helpers/authURL');
 
 // Users Model
 require('../models/user');
 const User = mongoose.model('User');
+
 
 router.get('/register', (req, res) => {
   res.render('users/register', {
@@ -22,6 +25,7 @@ router.get('/login', (req, res) => {
   });
 });
 
+
 // User Register
 router.post('/register', (req, res) => {
   let errors = [];
@@ -30,8 +34,6 @@ router.post('/register', (req, res) => {
     errors.push({message: 'passwords do not match!'});
   } else if (req.body.password.length < 5) {
     errors.push({message: 'password must be atleast 5 characters!'});
-  } else if (req.body.cell.length < 10 || req.body.cell.length > 10) {
-    errors.push({message: 'please enter a valid Phone number'});
   } else if (checkSpaces(req.body.name)) {
     errors.push({message:  `sorry you can't put white spaces in your name`});
   }
@@ -40,7 +42,6 @@ router.post('/register', (req, res) => {
     res.render('users/register', {
       errors,
       name: req.body.name,
-      phone: req.body.cell,
       email: req.body.email
     });
 
@@ -68,7 +69,6 @@ router.post('/register', (req, res) => {
       const newUser = new User({
         name: req.body.name,
         email: req.body.email,
-        phone: req.body.cell,
         password: req.body.password
       });
 
@@ -76,7 +76,8 @@ router.post('/register', (req, res) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
           newUser.password = hash;
           newUser.save().then( user => {
-            req.flash('success_msg', `Tank you for registering ${user.name}, u can now Login`);
+            req.flash('success_msg', `Tank you for registering ${user.name}, Confirmation link is sent to your Email`);
+            confirmEmail(user._id, user.email);
             res.redirect('/users/login');
           }).catch( e => console.log(e));
         });
@@ -86,12 +87,26 @@ router.post('/register', (req, res) => {
   }
 });
 
+// email confirmation URL
+router.get('/confirm/:token', (req, res) => {
+  const decoded = jwt.verify(req.params.token, process.env.JWT_SEC);
+
+  User.findOneAndUpdate({_id: decoded.data}, {$set: {confirmed: true}}, {new: true}).then( user => {
+    req.flash('success_msg', `congractulations ${user.name}you have been verified, you can now log in.`);
+    res.redirect('/users/login');
+  })
+
+});
+
+
 router.post('/login', (req, res, nxt) => {
+  
   passport.authenticate('local', {
     successRedirect: '/me',
     failureRedirect: '/users/login',
     failureFlash: true
-  })(req, res, nxt);
+  })(req, res, nxt); 
+  
 });
 
 router.get('/logout', (req, res) => {
