@@ -33,8 +33,7 @@ module.exports = {
     data: uvUser._id
 }, process.env.JWT_SEC, { expiresIn: 60 * 60 });
 
-//const url = `https://warm-dawn-89730.herokuapp.com/users/confirm/${token}`;
-const url = `http://localhost:5000/users/confirm/${token}`;
+const url = `https://warm-dawn-89730.herokuapp.com/users/confirm/${token}`;
 
   const mailOpt = {
       from: process.env.G_MAIL,
