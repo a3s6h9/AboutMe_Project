@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
 
 module.exports = {
   ensureauthorized: (req, res, nxt) => {
@@ -20,36 +21,37 @@ module.exports = {
     }
   },
 
-  confirmEmail: (uvUser, uEmail) => {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-          user: process.env.G_MAIL,
-          pass: process.env.G_PASS
-      }
-  });
+  confirmEmail: (uvUser, uEmail) => {  
+  var transporter = nodemailer.createTransport(smtpTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    auth: {
+      user: process.env.G_MAIL,
+      pass: process.env.G_PASS
+    }
+  }));
 
   const token = jwt.sign({
     data: uvUser._id
-}, process.env.JWT_SEC, { expiresIn: 60 * 60 });
+  }, process.env.JWT_SEC, { expiresIn: 60 * 60 });
 
-const url = `https://warm-dawn-89730.herokuapp.com/users/confirm/${token}`;
-
-  const mailOpt = {
-      from: process.env.G_MAIL,
-      to: uEmail,
-      subject: 'E-Mail Confirmation',
-      html: ` <h1>Confirm your AboutMe Account</h1>
-              <h3>click on the link below to confirm your email</h3> 
-              <a href="${url}">${url}</a>`
-  }
+  const url = `https://warm-dawn-89730.herokuapp.com/users/confirm/${token}`;
+    
+  var mailOptions = {
+    from: process.env.G_MAIL,
+    to: uEmail,
+    subject: 'verify your AboutMe Acccount',
+    html: `<p>please click on the link below to confirm your Account
+          <a href="${url}">${url}</a>`
+  };
   
-  transporter.sendMail(mailOpt, (err, info) => {
-      if (err) throw err;
-  
-      console.log(info);
-  });
-  
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });  
   }
 }
 

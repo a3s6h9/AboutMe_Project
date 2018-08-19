@@ -57,13 +57,6 @@ router.post('/register', (req, res) => {
     if (user) {
       req.flash('error_msg', `This username already exists`);
       res.redirect('/users/register');
-    }
-   });
-
-   User.findOne({phone: req.body.cell}).then( user => {
-    if (user) {
-      req.flash('error_msg', `This phone number already exists`);
-      res.redirect('/users/register');
 
     } else {
       const newUser = new User({
