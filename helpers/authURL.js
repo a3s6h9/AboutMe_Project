@@ -23,11 +23,13 @@ module.exports = {
 
   confirmEmail: (uvUser, uEmail) => {  
   var transporter = nodemailer.createTransport(smtpTransport({
-    service: 'gmail',
-    host: 'smtp.gmail.com',
+    service: 'yahoo',
+    host: 'smtp.mail.yahoo.com',
+    port: 465,
+    secure: false,
     auth: {
-      user: process.env.G_MAIL,
-      pass: process.env.G_PASS
+      user: process.env.Y_MAIL,
+      pass: process.env.Y_PASS
     }
   }));
 
@@ -38,7 +40,7 @@ module.exports = {
   const url = `https://warm-dawn-89730.herokuapp.com/users/confirm/${token}`;
     
   var mailOptions = {
-    from: process.env.G_MAIL,
+    from: process.env.Y_MAIL,
     to: uEmail,
     subject: 'verify your AboutMe Acccount',
     html: `<p>please click on the link below to confirm your Account
