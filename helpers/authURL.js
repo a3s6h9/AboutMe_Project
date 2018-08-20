@@ -42,8 +42,8 @@ module.exports = {
   var mailOptions = {
     from: process.env.Y_MAIL,
     to: uEmail,
-    subject: 'verify your AboutMe Acccount',
-    html: `<p>please click on the link below to confirm your Account
+    subject: 'Verify Your AboutMe Acccount',
+    html: `<h3>please click on the link below to confirm your Account</h3>
           <a href="${url}">${url}</a>`
   };
   
