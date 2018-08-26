@@ -21,6 +21,10 @@ const usersSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now()
+  },
+  resetToken: {
+    type: String,
+    default: null
   }
 });
 

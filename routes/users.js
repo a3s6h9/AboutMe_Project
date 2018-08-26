@@ -6,7 +6,7 @@ const _ = require('lodash');
 
 const router = require('express').Router();
 
-const {checkSpaces, confirmEmail} = require('../helpers/authURL');
+const {checkSpaces, confirmEmail,passReset} = require('../helpers/authURL');
 
 // Users Model
 require('../models/user');
@@ -91,6 +91,68 @@ router.get('/confirm/:token', (req, res) => {
 
 });
 
+router.get('/forgot', (req, res) => {
+  res.render('users/forgot');
+});
+
+
+router.post('/forgot', (req, res) => {
+  const f_pwdemail = req.body.f_pwdemail;
+
+  User.findOne({email: f_pwdemail}).then( user => {
+    if (user) {
+      const resetToken = passReset(f_pwdemail);
+      user.resetToken = resetToken.token;
+      console.log(user);
+      res.render('users/greetings');
+    } else {
+      req.flash('error_msg', 'sorry this E-Mail does not exist');
+      res.redirect('/users/forgot');
+    }
+  }).catch( e => console.log(e));
+});
+
+router.get('/forgot/reset/:token', (req, res) => {
+ const decoded = jwt.verify(req.params.token, process.env.JWT_SEC);
+ User.findOne({email: decoded.data}).then( user => {
+    if (!user) {
+      req.flash('unauthorized request');
+      res.redirect('/');
+    } else {
+      res.render('users/reset');
+    }
+ });
+});
+
+router.post('/forgot/reset', (req, res) => {
+ User.findOne({resetToken: req.params.token}).then( user => {
+    if (!user) {
+      req.flash('unauthorized request');
+      res.redirect('/');
+    } else {
+      console.log(req.headers.referer);
+      if (req.body.resetpwd.length < 5 || req.body.resetpwd1.length < 5) {
+        req.flash('error_msg', 'password must be more than 4 characters');
+        res.redirect(req.headers.referer);
+      } else if (req.body.resetpwd !== req.body.resetpwd1) {
+        req.flash('error_msg', 'passwords do not match');
+        res.redirect(req.headers.referer);
+      }
+      else {
+        bcrypt.genSalt(10, (errors, salt) => {
+          bcrypt.hash(req.body.resetpwd, salt, (err, hash) => {
+            user.password = hash;
+            user.save().then( nuser => {
+              console.log(nuser);
+              req.flash('success_msg', `your password is now succefully changed you can now Login.`);
+              res.redirect('/users/login');
+            }).catch( e => console.log(e));
+          });
+        });
+      }
+    }
+ });
+});
 
 router.post('/login', (req, res, nxt) => {
   
