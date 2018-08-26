@@ -72,7 +72,7 @@ module.exports = {
       data: email
     }, process.env.JWT_SEC, { expiresIn: 60 * 60 });
 
-    const url = `https://warm-dawn-89730.herokuapp.com/users/confirm/${token}`;
+    const url = `https://warm-dawn-89730.herokuapp.com/users/forgot/reset/${token}`;
 
     let mailOptions = {
       from: `"AboutMe" <${process.env.Y_MAIL}>`,
